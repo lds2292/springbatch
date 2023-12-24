@@ -2,7 +2,6 @@ package com.browngoo.springbatch;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
@@ -10,11 +9,9 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Map;
-
 @Configuration
 @RequiredArgsConstructor
-public class JobParametersConfiguration {
+public class JobExecutionConfiguration {
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
@@ -30,16 +27,7 @@ public class JobParametersConfiguration {
     @Bean
     public Step step1() {
         return stepBuilderFactory.get("step1")
-            .tasklet((contribution, chunkContext) -> {
-                JobParameters jobParameters = contribution.getStepExecution().getJobParameters();
-                System.out.println("jobParameters.getString(\"name\") = " + jobParameters.getString("name"));;
-                System.out.println("jobParameters.getLong(\"seq\") = " + jobParameters.getLong("seq"));;
-                System.out.println("jobParameters.getDate(\"date\") = " + jobParameters.getDate("date"));;
-                System.out.println("jobParameters.getDouble(\"age\") = " + jobParameters.getDouble("age"));;
-
-                Map<String, Object> jobParameters1 = chunkContext.getStepContext().getJobParameters();
-                return RepeatStatus.FINISHED;
-            }).build();
+            .tasklet((contribution, chunkContext) -> RepeatStatus.FINISHED).build();
     }
 
     @Bean
