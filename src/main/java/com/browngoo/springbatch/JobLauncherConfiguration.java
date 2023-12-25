@@ -9,9 +9,11 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.time.Duration;
+
 @Configuration
 @RequiredArgsConstructor
-public class JobExecutionConfiguration {
+public class JobLauncherConfiguration {
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
@@ -27,7 +29,10 @@ public class JobExecutionConfiguration {
     @Bean
     public Step step1() {
         return stepBuilderFactory.get("step1")
-            .tasklet((contribution, chunkContext) -> RepeatStatus.FINISHED).build();
+            .tasklet((contribution, chunkContext) -> {
+                Thread.sleep(Duration.ofSeconds(3).toMillis());
+                return RepeatStatus.FINISHED;
+            }).build();
     }
 
     @Bean
