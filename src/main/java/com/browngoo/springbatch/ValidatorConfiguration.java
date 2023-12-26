@@ -13,16 +13,18 @@ import java.time.Duration;
 
 @Configuration
 @RequiredArgsConstructor
-public class JobLauncherConfiguration {
+public class ValidatorConfiguration {
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
 
     @Bean
-    public Job job() {
-        return jobBuilderFactory.get("job")
+    public Job batchJob() {
+        return jobBuilderFactory.get("batchJob")
             .start(step1())
             .next(step2())
+            .next(step3())
+            .validator(new CustomJobParameterValidator())
             .build();
     }
 
@@ -38,6 +40,12 @@ public class JobLauncherConfiguration {
     @Bean
     public Step step2() {
         return stepBuilderFactory.get("step2")
+            .tasklet((contribution, chunkContext) -> RepeatStatus.FINISHED).build();
+    }
+
+    @Bean
+    public Step step3() {
+        return stepBuilderFactory.get("step3")
             .tasklet((contribution, chunkContext) -> RepeatStatus.FINISHED).build();
     }
 }
